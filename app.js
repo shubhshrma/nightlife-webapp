@@ -10,6 +10,7 @@ var passport = require('passport');
 var TwitterStrategy = require('passport-twitter').Strategy;
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
+var config = require('./config.js');
 
 mongoose.connect('mongodb://localhost/nightlife-webapp');
 mongoose.Promise = global.Promise;
@@ -36,23 +37,23 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Express Validator
-app.use(expressValidator({
-  errorFormatter: function(param, msg, value) {
-      var namespace = param.split('.')
-      , root    = namespace.shift()
-      , formParam = root;
-
-    while(namespace.length) {
-      formParam += '[' + namespace.shift() + ']';
-    }
-    return {
-      param : formParam,
-      msg   : msg,
-      value : value
-    };
-  }
+passport.use(new TwitterStrategy({
+    consumerKey: config.twitterKeys.CONSUMER_KEY,
+    consumerSecret: config.twitterKeys.CONSUMER_SECRET,
+    callbackURL: 'http://localhost:3000/login/twitter/return'
+  },
+  function(token, tokenSecret, profile, cb) {
+    console.log(profile);
+    return cb(null, profile);
 }));
+passport.serializeUser(function(user, cb) {
+  cb(null, user);
+});
+
+passport.deserializeUser(function(obj, cb) {
+  cb(null, obj);
+});
+
 
 // Connect Flash
 app.use(flash());
@@ -68,6 +69,15 @@ app.use(function (req, res, next) {
 
 app.get('/', function(req, res){
   res.sendFile('index.html');
+});
+
+app.get('/login/twitter',
+passport.authenticate('twitter'));
+
+app.get('/login/twitter/return', 
+  passport.authenticate('twitter', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/');
 });
 
 // Set Port
