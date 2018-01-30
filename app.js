@@ -11,6 +11,8 @@ var TwitterStrategy = require('passport-twitter').Strategy;
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var config = require('./config.js');
+var User = require('./models/user');
+var Poll = require('./models/poll');
 
 mongoose.connect('mongodb://localhost/nightlife-webapp');
 mongoose.Promise = global.Promise;
@@ -80,6 +82,46 @@ app.get('/login/twitter/return',
     res.redirect('/');
 });
 
+app.get('/bars/:barid/strength', function(req, res){
+    var id = req.params.barid;
+    Bar.getBarById(id, function(err, bar){
+      if(err) throw err;
+      if(!bar){
+       res.json({strength: 0});
+      }
+      else{
+        res.json({strength: bar.strength});
+      }
+
+    });
+});
+app.get('/bars/go/:barid', function(req, res){
+    var id = req.params.barid;
+    Bar.getBarById(id, function(err, bar){
+      if(err) throw err;
+      if(!bar){
+        var newBar={
+          id: id,
+          strength: 1
+        };
+        Bar.createBar(newBar, function(err, bar){
+          if(err) throw err;
+          res.json({strength: 1});
+        });
+      }
+      else{
+        bar.strength++;
+        
+        bar.markModified('strength');
+        bar.save(function(err, newBar){
+          if(err) throw err;
+          res.json({strength: newBar.strength});
+        })
+        
+      }
+
+    });
+});
 // Set Port
 app.set('port', (process.env.PORT || 3000));
 
