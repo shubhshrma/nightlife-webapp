@@ -12,7 +12,7 @@ var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var config = require('./config.js');
 var User = require('./models/user');
-var Poll = require('./models/poll');
+var Bar = require('./models/bar');
 
 mongoose.connect('mongodb://localhost/nightlife-webapp');
 mongoose.Promise = global.Promise;
@@ -100,10 +100,10 @@ app.get('/bars/go/:barid', function(req, res){
     Bar.getBarById(id, function(err, bar){
       if(err) throw err;
       if(!bar){
-        var newBar={
+        var newBar=new Bar({
           id: id,
           strength: 1
-        };
+        });
         Bar.createBar(newBar, function(err, bar){
           if(err) throw err;
           res.json({strength: 1});
@@ -116,8 +116,7 @@ app.get('/bars/go/:barid', function(req, res){
         bar.save(function(err, newBar){
           if(err) throw err;
           res.json({strength: newBar.strength});
-        })
-        
+        });
       }
 
     });
