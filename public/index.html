@@ -65,8 +65,8 @@
             <div class="card-body">
               <p class="card-text">{{bar.name}}</p>
               <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-secondary">Go</button>
+                <div class="btn-group" ng-show="{{user}}">
+                  <button type="button" ng-click="go(bar.id)" class="btn btn-sm btn-outline-secondary">Go</button>
                 </div>
                 <small class="text-muted">{{strengths[bar.id]}} going</small>
               </div>

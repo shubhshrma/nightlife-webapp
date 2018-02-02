@@ -121,6 +121,11 @@ app.get('/bars/go/:barid', function(req, res){
 
     });
 });
+app.get('/userstate', function(req, res){
+  var user=req.user?true:false;
+  res.json({user:user});
+
+});
 // Set Port
 app.set('port', (process.env.PORT || 3000));
 

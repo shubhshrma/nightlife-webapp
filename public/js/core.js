@@ -18,10 +18,22 @@ nightlife.controller('mainController', function mainController($scope, $http){
 			});
 			
 		});
-		console.log($scope.bars);
 	}, function(err){
 		console.err(err);
 	});
-}
+
+	}
+	$http.get('/userstate').then(function(res){
+		$scope.user=res.data.user;
+	}, function(err){
+		console.err(err);
+	});
+	$scope.go=function(id){
+		$http.get('bars/go/'+id).then(function(res){
+			$scope.strengths[id]=res.data.strength;
+		}, function(err){
+			console.err(err);
+		});
+	}
 });
 
