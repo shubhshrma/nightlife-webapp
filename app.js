@@ -30,9 +30,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Express Session
 app.use(session({
-    secret: 'secret',
-    saveUninitialized: true,
-    resave: true
+  secret: 'secret',
+  saveUninitialized: true,
+  resave: true
 }));
 
 // Passport init
@@ -96,35 +96,56 @@ app.get('/bars/:barid/strength', function(req, res){
     });
 });
 app.get('/bars/go/:barid', function(req, res){
+    var username = req.user.username;
     var id = req.params.barid;
-    Bar.getBarById(id, function(err, bar){
+    var user = User.getUserByUsername(username, function(err, user){
       if(err) throw err;
-      if(!bar){
-        var newBar=new Bar({
-          id: id,
-          strength: 1
-        });
-        Bar.createBar(newBar, function(err, bar){
+      var placeAlreadyPresent=user.places.findIndex(function(e){
+        return e==id;
+      });
+      if(placeAlreadyPresent==-1){
+        user.places.push(id);
+        user.markModified('places');
+        user.save(function(err, newUser){
           if(err) throw err;
-          res.json({strength: 1});
-        });
-      }
-      else{
-        bar.strength++;
-        
-        bar.markModified('strength');
-        bar.save(function(err, newBar){
-          if(err) throw err;
-          res.json({strength: newBar.strength});
-        });
-      }
 
+        Bar.getBarById(id, function(err, bar){
+          if(err) throw err;
+          if(!bar){
+            var newBar=new Bar({
+              id: id,
+              strength: 1
+            });
+            Bar.createBar(newBar, function(err, bar){
+              if(err) throw err;
+              res.json({strength: 1});
+            });
+          }
+          else{
+            bar.strength++;
+             
+            bar.markModified('strength');
+            bar.save(function(err, newBar){
+              if(err) throw err;
+              res.json({strength: newBar.strength});
+            });
+          }
+        });
+        });
+      }
+      else res.json({strength: false});
     });
 });
 app.get('/userstate', function(req, res){
-  var user=req.user?true:false;
+  var user=req.user?req.user:false;
   res.json({user:user});
 
+});
+app.get('users/:username/bars', function(req, res){
+  User.getUserByUsername(req.user.username, function(err, user){
+    if(err) throw err;
+    
+  });
 });
 // Set Port
 app.set('port', (process.env.PORT || 3000));

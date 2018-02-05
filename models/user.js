@@ -4,8 +4,11 @@ var UserSchema = mongoose.Schema({
  	username:{
  		type: String,
  		index: true
+ 	},
+ 	places:{
+ 		type: Array
  	}
- });
+});
 var User = module.exports = mongoose.model('User', UserSchema);
 
 module.exports.createUser = function(newUser, callback) {

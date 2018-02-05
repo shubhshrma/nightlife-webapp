@@ -1,0 +1,38 @@
+<div ng-controller="searchController">
+<div class="jumbotron">
+  <div class="container">
+    <h1 class="display-3">Hello, world!</h1>
+    <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
+    <div class="mb-3">
+      <p class="text-center">{{introText}}</p>
+      <div class="input-group">
+        <input type="text" ng-model="place" class="form-control" id="search_text" placeholder="Where are you" required>
+        <input type="submit" id="search" ng-click="getBars()" class="btn btn-success" value="Search">
+        <div class="invalid-feedback" style="width: 100%;">
+          Place is required.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class=" py-5 bg-light" >
+  <div class="container" >
+    <div id="bar-container">
+    <div ng-repeat="bar in bars" class="col-md-4">
+      <div class="card mb-4 box-shadow">
+        <img class="card-img-top" ng-src="{{bar.image_url}}" alt="Bar name">
+        <div class="card-body">
+          <p class="card-text">{{bar.name}}</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="btn-group" ng-show="{{user}}">
+              <button type="button" ng-click="go(bar.id)" class="btn btn-sm btn-outline-secondary">Go</button>
+            </div>
+            <small class="text-muted">{{strengths[bar.id]}} going</small>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+</div>
