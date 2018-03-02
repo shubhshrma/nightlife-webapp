@@ -13,10 +13,7 @@ nightlife.config(['$locationProvider', '$routeProvider',
         otherwise('/');
     }
   ]);
-nightlife.controller('navController', function() {
 
-
-});
 nightlife.controller('searchController', function searchController($scope, $http){
 	$scope.place='';
 	$scope.getBars = function(){
@@ -40,16 +37,34 @@ nightlife.controller('searchController', function searchController($scope, $http
 	});
 
 	}
+	$scope.username='';
+	$scope.going=[];
 	$http.get('/userstate').then(function(res){
-		$scope.user=res.data.user;
+		$scope.username=res.data.user.username;
+		console.log($scope.username);
+		if($scope.username){
+			$http.get('/users/'+$scope.username+'/bars').then(function(res){
+				console.log(res.data.places);
+				res.data.places.map(e => $scope.going[e]=1);
+			})
+		}
+	
 	}, function(err){
-		console.err(err);
+		console.error(err);
 	});
+	console.log($scope.going);
 	$scope.go=function(id){
 		$http.get('bars/go/'+id).then(function(res){
 			$scope.strengths[id]=res.data.strength;
 		}, function(err){
-			console.err(err);
+			console.error(err);
+		});
+	}
+	$scope.remove=function(id){
+		$http.get('bars/remove/'+id).then(function(res){
+			$scope.strengths[id]=res.data.strength;
+		}, function(err){
+			console.error(err);
 		});
 	}
 
@@ -57,26 +72,17 @@ nightlife.controller('searchController', function searchController($scope, $http
 nightlife.controller('myPlacesController', function myPlacesController($scope, $http){
 	$scope.place='';
 	$http.get('/userstate').then(function(res){
-		$scope.user=res.data.user;
-	}, function(err){
-		console.err(err);
-	});
-	$scope.getBars = function(){
-		$http.get("/users/"+user+"/bars").then(function(res){
-		$scope.bars=res.data.businesses;
-			
-		
-	}, function(err){
-		console.err(err);
-	});
-	};
-	
-	$scope.remove=function(id){
-		$http.get('bars/remove/'+id).then(function(res){
-			$scope.strengths[id]=res.data.strength;
-		}, function(err){
-			console.err(err);
+		$scope.user=res.data.user.username;
+		console.log($scope.user);
+		$http.get("/users/"+$scope.user+"/bars").then(function(res){
+			$scope.bars=res.data.places;
+			console.log($scope.bars);
+			}, function(err){
+				console.log(err);
 		});
-	}
-
+	}, function(err){
+		console.error(err);
+	});
+	
+	
 });

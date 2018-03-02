@@ -45,7 +45,6 @@ passport.use(new TwitterStrategy({
     callbackURL: 'http://localhost:3000/login/twitter/return'
   },
   function(token, tokenSecret, profile, cb) {
-    console.log(profile);
     return cb(null, profile);
 }));
 passport.serializeUser(function(user, cb) {
@@ -55,7 +54,6 @@ passport.serializeUser(function(user, cb) {
 passport.deserializeUser(function(obj, cb) {
   cb(null, obj);
 });
-
 
 // Connect Flash
 app.use(flash());
@@ -79,6 +77,18 @@ passport.authenticate('twitter'));
 app.get('/login/twitter/return', 
   passport.authenticate('twitter', { failureRedirect: '/login' }),
   function(req, res) {
+    User.getUserByUsername(req.user.username, function(err, user){
+      if(err) throw err;
+      if(!user){
+        var newUser=new User({
+          username: req.user.username,
+          places: Array
+        });
+        User.createUser(newUser, function(err, newUser1){
+          if(err) throw err;
+        })
+      }
+    })
     res.redirect('/');
 });
 
@@ -92,7 +102,6 @@ app.get('/bars/:barid/strength', function(req, res){
       else{
         res.json({strength: bar.strength});
       }
-
     });
 });
 app.get('/bars/go/:barid', function(req, res){
@@ -123,7 +132,6 @@ app.get('/bars/go/:barid', function(req, res){
           }
           else{
             bar.strength++;
-             
             bar.markModified('strength');
             bar.save(function(err, newBar){
               if(err) throw err;
@@ -136,17 +144,42 @@ app.get('/bars/go/:barid', function(req, res){
       else res.json({strength: false});
     });
 });
+app.get('/bars/remove/:barid', function(req, res){
+  var username = req.user.username;
+  var barid = req.params.barid;
+  var user = User.getUserByUsername(username, function(err, user){
+    if(err) throw err;
+    var barPresent = user.places.find( id => {
+      return id==barid;
+    });
+    Bar.getBarById(barid, function(err, bar){
+      if(err) throw err;
+      if(!barPresent){
+        res.json({strength: bar.strength})
+      }
+      bar.strength--;
+      bar.markModified('strength');
+      bar.save(function(err, newBar){
+        if(err) throw err;
+        res.json({strength: newBar.strength});
+      });
+    })
+  })
+
+});
 app.get('/userstate', function(req, res){
   var user=req.user?req.user:false;
   res.json({user:user});
 
 });
-app.get('users/:username/bars', function(req, res){
+app.get('/users/:username/bars', function(req, res){
   User.getUserByUsername(req.user.username, function(err, user){
     if(err) throw err;
-    
+    console.log(1);
+    res.json({places: user.places});
   });
 });
+
 // Set Port
 app.set('port', (process.env.PORT || 3000));
 
