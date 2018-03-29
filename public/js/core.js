@@ -28,17 +28,17 @@ nightlife.controller('searchController', function searchController($scope, $http
 				$scope.strengths[obj.id]=res.data.strength;
 				
 			}, function(err){
-				console.err(err);
+				console.error(err);
 			});
 			
 		});
 	}, function(err){
-		console.err(err);
+		console.error(err);
 	});
 
 	}
 	$scope.username='';
-	$scope.going=[];
+	$scope.going={};
 	$http.get('/userstate').then(function(res){
 		$scope.username=res.data.user.username;
 		console.log($scope.username);
@@ -56,6 +56,7 @@ nightlife.controller('searchController', function searchController($scope, $http
 	$scope.go=function(id){
 		$http.get('bars/go/'+id).then(function(res){
 			$scope.strengths[id]=res.data.strength;
+			$scope.going[id]=1;
 		}, function(err){
 			console.error(err);
 		});
@@ -63,6 +64,7 @@ nightlife.controller('searchController', function searchController($scope, $http
 	$scope.remove=function(id){
 		$http.get('bars/remove/'+id).then(function(res){
 			$scope.strengths[id]=res.data.strength;
+			$scope.going[id]=0;
 		}, function(err){
 			console.error(err);
 		});

@@ -6,7 +6,8 @@ var BarSchema = mongoose.Schema({
  		index: true
  	},
  	strength:{
- 		type: Number
+ 		type: Number,
+ 		min: 0
  	}
  });
 var Bar = module.exports = mongoose.model('Bar', BarSchema);

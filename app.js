@@ -152,18 +152,29 @@ app.get('/bars/remove/:barid', function(req, res){
     var barPresent = user.places.find( id => {
       return id==barid;
     });
-    Bar.getBarById(barid, function(err, bar){
-      if(err) throw err;
-      if(!barPresent){
-        res.json({strength: bar.strength})
-      }
-      bar.strength--;
-      bar.markModified('strength');
-      bar.save(function(err, newBar){
+    if(barPresent){
+      user.places.splice(barPresent, 1);
+      user.markModified('places');
+      user.save((err, newUser) => {
         if(err) throw err;
-        res.json({strength: newBar.strength});
-      });
-    })
+        Bar.getBarById(barid, function(err, bar){
+          if(err) throw err;
+        
+          bar.strength--;
+          bar.markModified('strength');
+          bar.save(function(err, newBar){
+            if(err) throw err;
+            res.json({strength: newBar.strength});
+          });
+        })
+      })
+    }
+    else{
+      Bar.getBarById(barid, function(err, bar){
+        if(err) throw err;
+        res.json({strength: bar.strength})
+      })
+    }
   })
 
 });
