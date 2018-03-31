@@ -16,8 +16,8 @@
     <script type="text/javascript" src="js/script.js"></script>
     <script type="text/javascript" src="js/core.js"></script>
   </head>
-  <body>
-    <nav ng-controller="searchController" class="navbar navbar-expand-sm navbar-dark bg-dark">
+  <body ng-controller="searchController" >
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
       <a class="navbar-brand" href="/">Nightlife</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample03" aria-controls="navbarsExample03" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -46,7 +46,7 @@
       <p>
         Uses&nbsp;&nbsp;&nbsp;<a href="https://developers.zomato.com/" target="_blank"><img class="img-fluid rounded" src="https://www.dealsunny.com/m/Store/logo_s/HkN0eH_K.jpg" height="70" width="150" /></a>&nbsp;&nbsp;&nbsp;at the core. 
       </p>
-        <a href="#">Back to top</a>
+        <a ng-click="gotoTop()" href="">Back to top</a>
       </p>
     </footer>
   </body>

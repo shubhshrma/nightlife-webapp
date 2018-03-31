@@ -7,15 +7,11 @@ nightlife.config(['$locationProvider', '$routeProvider',
         when('/', {
 			templateUrl: './search.html'
 	    }).
-        when('/myplaces', {
-			templateUrl: './myplaces.html'
-	    }).
         otherwise('/');
     }
   ]);
 
-nightlife.controller('searchController', function searchController($scope, $http){
-	$scope.place='';
+nightlife.controller('searchController', function searchController($anchorScroll, $location, $scope, $http){
 	// $scope.getBars = function(){
 	// 	$http.get("https://cors-anywhere.herokuapp.com/api.yelp.com/v3/businesses/search?location="+$scope.place,{
 	// 		headers:{'Authorization':'Bearer L_hC1l86flwecMOek3SMlhuD4LMbz1oTth5IbJuP42QiOoMhh8k6h474UYmZJzykkN93zUFQJT3hyMCe6d2mxLBBuVLVhD4kvYJajei32WtWTEWcPsDumAgDNj9fWnYx'}
@@ -36,8 +32,14 @@ nightlife.controller('searchController', function searchController($scope, $http
 	// 	console.error(err);
 	// });
 
-	// }
+	//
+
+	$scope.gotoTop = function(){
+		$location.hash('navbar');
+		$anchorScroll();
+	}
 	$scope.getBars = function(){
+		localStorage.setItem('place', $scope.place);
 		$http.get("https://cors-anywhere.herokuapp.com/developers.zomato.com/api/v2.1/locations",{
 			headers: {'user-key': '5de056390dcaf1aba69c9604cc55f0bf'},
 			params: {'query': $scope.place}
@@ -72,7 +74,11 @@ nightlife.controller('searchController', function searchController($scope, $http
 		})
 			
 	}
-	
+	if(localStorage.getItem('place') !== undefined)
+	{
+		$scope.place=localStorage.getItem('place');
+		$scope.getBars();
+	}
 	$scope.username='';
 	$scope.going={};
 	$http.get('/userstate').then(function(res){
@@ -107,21 +113,5 @@ nightlife.controller('searchController', function searchController($scope, $http
 		});
 	}
 
-});
-nightlife.controller('myPlacesController', function myPlacesController($scope, $http){
-	$scope.place='';
-	$http.get('/userstate').then(function(res){
-		$scope.user=res.data.user.username;
-		console.log($scope.user);
-		$http.get("/users/"+$scope.user+"/bars").then(function(res){
-			$scope.bars=res.data.places;
-			console.log($scope.bars);
-			}, function(err){
-				console.log(err);
-		});
-	}, function(err){
-		console.error(err);
-	});
-	
-	
-});
+}
+);
