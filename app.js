@@ -107,12 +107,12 @@ app.get('/bars/:barid/strength', function(req, res){
 app.get('/bars/go/:barid', function(req, res){
     var username = req.user.username;
     var id = req.params.barid;
-    var user = User.getUserByUsername(username, function(err, user){
+    User.getUserByUsername(username, function(err, user){
       if(err) throw err;
       var placeAlreadyPresent=user.places.findIndex(function(e){
-        return e==id;
+        return e===id;
       });
-      if(placeAlreadyPresent==-1){
+      if(placeAlreadyPresent===-1){
         user.places.push(id);
         user.markModified('places');
         user.save(function(err, newUser){
@@ -141,41 +141,49 @@ app.get('/bars/go/:barid', function(req, res){
         });
         });
       }
-      else res.json({strength: false});
+      else
+      {
+        Bar.getBarById(id, function(err, bar){
+          if(err) throw err;
+          res.json({strength: bar.strength});
+        })
+      };
     });
 });
 app.get('/bars/remove/:barid', function(req, res){
-  var username = req.user.username;
-  var barid = req.params.barid;
-  var user = User.getUserByUsername(username, function(err, user){
-    if(err) throw err;
-    var barPresent = user.places.find( id => {
-      return id==barid;
+    
+    var username = req.user.username;
+    var barid = req.params.barid;
+    User.getUserByUsername(username, function (err, user) {
+        if (err) throw err;
+        var barPresent = user.places.findIndex(id => {
+            return id === barid;
+        });
+        console.log(barPresent);
+        if (barPresent>=0) {
+            user.places.splice(barPresent, 1);
+            user.markModified('places');
+            user.save(function(err, newUser){
+                if (err) throw err;
+                Bar.getBarById(barid, function (err, bar) {
+                    if (err) throw err;
+
+                    bar.strength--;
+                    bar.markModified('strength');
+                    bar.save(function (err, newBar) {
+                        if (err) throw err;
+                        res.json({strength: newBar.strength});
+                    });
+                })
+            })
+        }
+        else {
+            Bar.getBarById(barid, function (err, bar) {
+                if (err) throw err;
+                res.json({strength: bar.strength})
+            })
+        }
     });
-    if(barPresent){
-      user.places.splice(barPresent, 1);
-      user.markModified('places');
-      user.save((err, newUser) => {
-        if(err) throw err;
-        Bar.getBarById(barid, function(err, bar){
-          if(err) throw err;
-        
-          bar.strength--;
-          bar.markModified('strength');
-          bar.save(function(err, newBar){
-            if(err) throw err;
-            res.json({strength: newBar.strength});
-          });
-        })
-      })
-    }
-    else{
-      Bar.getBarById(barid, function(err, bar){
-        if(err) throw err;
-        res.json({strength: bar.strength})
-      })
-    }
-  })
 
 });
 app.get('/userstate', function(req, res){

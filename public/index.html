@@ -18,31 +18,36 @@
   </head>
   <body>
     <nav ng-controller="searchController" class="navbar navbar-expand-sm navbar-dark bg-dark">
-      <a class="navbar-brand" href="">Nightlife</a>
+      <a class="navbar-brand" href="/">Nightlife</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample03" aria-controls="navbarsExample03" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="collapse navbar-collapse" id="navbarsExample03">
+      <div class="collapse navbar-collapse" id="navbar">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="">Home <span class="sr-only">(current)</span></a>
+          
+          <li class="nav-item active pull-right" ng-hide="username">
+            <a class="nav-link" href="login/twitter">Sign in with twitter</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
+          <li class="nav-item active pull-right" ng-show="username">
+            <a class="nav-link" href="logout">Logout</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#">Disabled</a>
-          </li>
-          <li class="nav-item pull-right" ng-hide="username">
-            <a class="nav-link btn btn-primary" href="login/twitter">Sign in with twitter</a>
-          </li>
-          <li class="nav-item pull-right" ng-show="username">
-            <a class="nav-link btn btn-primary" href="logout">Logout</a>
-          </li>
+          
         </ul>
+        <span class="navbar-text" ng-show="username">
+          Hi,&nbsp;{{username}}
+        </span>
       </div>
     </nav>
     <div ng-view></div>
+    <footer class="blog-footer">
+      <p> Built using <a href="https://getbootstrap.com/">Bootstrap</a> by <a href="https://github.com/shubhshrma">@shubhshrma</a>.</p>
+      <p>
+      <p>
+        Uses&nbsp;&nbsp;&nbsp;<a href="https://developers.zomato.com/" target="_blank"><img class="img-fluid rounded" src="https://www.dealsunny.com/m/Store/logo_s/HkN0eH_K.jpg" height="70" width="150" /></a>&nbsp;&nbsp;&nbsp;at the core. 
+      </p>
+        <a href="#">Back to top</a>
+      </p>
+    </footer>
   </body>
 </html> 

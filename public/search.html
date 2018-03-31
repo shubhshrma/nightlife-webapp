@@ -15,20 +15,21 @@
     </div>
   </div>
 </div>
-<div class="py-5 bg-light" >
+
+<div class="py-5 bg-light" ng-show="bars">
   <div class="container" >
     <div id="bar-container">
     <div ng-repeat="bar in bars" class="col-md-4">
       <div class="card mb-4 box-shadow">
-        <img class="card-img-top" ng-src="{{bar.image_url}}" alt="Bar name">
+        <img class="card-img-top" ng-src="{{bar.restaurant.featured_image}}" alt="Featured Image">
         <div class="card-body">
-          <p class="card-text">{{bar.name}}</p>
+          <p class="card-text">{{bar.restaurant.name}}</p>
           <div class="d-flex justify-content-between align-items-center">
             <div class="btn-group" ng-show="username">
-              <button type="button" ng-hide="going[bar.id]" ng-click="go(bar.id)" class="btn btn-sm btn-outline-secondary">Go</button>
-              <button type="button" ng-show="going[bar.id]" ng-click="remove(bar.id)" class="btn btn-sm btn-outline-secondary">Cancel</button>
+              <button type="button" ng-hide="going[bar.restaurant.id]" ng-click="go(bar.restaurant.id)" class="btn btn-sm btn-outline-secondary">Go</button>
+              <button type="button" ng-show="going[bar.restaurant.id]" ng-click="remove(bar.restaurant.id)" class="btn btn-sm btn-outline-secondary">Cancel</button>
             </div>
-            <small class="text-muted">{{strengths[bar.id]}} going</small>
+            <small class="text-muted">{{strengths[bar.restaurant.id]}} going</small>
           </div>
         </div>
       </div>
