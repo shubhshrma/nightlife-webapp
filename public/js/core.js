@@ -74,7 +74,8 @@ nightlife.controller('searchController', function searchController($anchorScroll
 		})
 			
 	}
-	if(localStorage.getItem('place') !== undefined)
+	var place = localStorage.getItem('place');
+	if(typeof place == "string")
 	{
 		$scope.place=localStorage.getItem('place');
 		$scope.getBars();

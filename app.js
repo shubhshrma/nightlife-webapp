@@ -92,6 +92,11 @@ app.get('/login/twitter/return',
     res.redirect('/');
 });
 
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
+
 app.get('/bars/:barid/strength', function(req, res){
     var id = req.params.barid;
     Bar.getBarById(id, function(err, bar){
@@ -104,6 +109,7 @@ app.get('/bars/:barid/strength', function(req, res){
       }
     });
 });
+
 app.get('/bars/go/:barid', function(req, res){
     var username = req.user.username;
     var id = req.params.barid;
@@ -150,6 +156,7 @@ app.get('/bars/go/:barid', function(req, res){
       };
     });
 });
+
 app.get('/bars/remove/:barid', function(req, res){
     
     var username = req.user.username;
