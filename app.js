@@ -42,7 +42,7 @@ app.use(passport.session());
 passport.use(new TwitterStrategy({
     consumerKey: config.twitterKeys.CONSUMER_KEY,
     consumerSecret: config.twitterKeys.CONSUMER_SECRET,
-    callbackURL: 'http://localhost:3000/login/twitter/return'
+    callbackURL: '/login/twitter/return'
   },
   function(token, tokenSecret, profile, cb) {
     return cb(null, profile);
