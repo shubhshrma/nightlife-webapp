@@ -1,4 +1,4 @@
-var nightlife = angular.module('nightlife', ['ngRoute']);
+var nightlife = angular.module('nightlife', ['ngRoute', 'ui.bootstrap']);
 nightlife.config(['$locationProvider', '$routeProvider',
     function config($locationProvider, $routeProvider, $scope) {
       $locationProvider.hashPrefix('!');
@@ -33,12 +33,16 @@ nightlife.controller('searchController', function searchController($anchorScroll
 	// });
 
 	//
-
+	$scope.totalBars = 0;
+	$scope.currentPage = 1;
+	$scope.pageSize = 20;
+	$scope.loading = false;
 	$scope.gotoTop = function(){
 		$location.hash('navbar');
 		$anchorScroll();
 	}
 	$scope.getBars = function(){
+		$scope.loading = true;
 		localStorage.setItem('place', $scope.place);
 		$http.get("https://cors-anywhere.herokuapp.com/developers.zomato.com/api/v2.1/locations",{
 			headers: {'user-key': '5de056390dcaf1aba69c9604cc55f0bf'},
@@ -53,13 +57,19 @@ nightlife.controller('searchController', function searchController($anchorScroll
 			var data=res.data.location_suggestions[0];
 			return $http.get("https://cors-anywhere.herokuapp.com/developers.zomato.com/api/v2.1/search?", {
 				headers: {'user-key': '5de056390dcaf1aba69c9604cc55f0bf'},
-				params: {'entity_type': data.entity_type, 'entity_id': data.entity_id}
+				params: {
+					'entity_type': data.entity_type, 
+					'entity_id': data.entity_id,
+					'start': ($scope.currentPage - 1) * $scope.pageSize
+				}
 			})
 			
 		})
 		.then(function(res){
 			console.log(res);
 			$scope.bars=res.data.restaurants;
+			$scope.loading = false;
+			$scope.totalBars = res.data.results_found;
 			$scope.strengths=[];
 			$scope.bars.forEach( function(obj){
 				$http.get('/bars/'+obj.restaurant.id+'/strength')
@@ -112,6 +122,10 @@ nightlife.controller('searchController', function searchController($anchorScroll
 		}, function(err){
 			console.error(err);
 		});
+	}
+
+	$scope.pageChanged = function() {
+		$scope.getBars();
 	}
 
 }

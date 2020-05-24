@@ -14,7 +14,7 @@ var config = require('./config.js');
 var User = require('./models/user');
 var Bar = require('./models/bar');
 
-mongoose.connect('mongodb://root:humroothai@ds129939.mlab.com:29939/nightlife-webapp');
+mongoose.connect(config.MONGO);
 mongoose.Promise = global.Promise;
 var db = mongoose.connection;
 // Init App

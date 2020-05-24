@@ -16,7 +16,7 @@
   </div>
 </div>
 
-<div class="py-5 bg-light" ng-show="bars">
+<div class="py-5 bg-light" ng-hide="loading">
   <div class="container" >
     <div id="bar-container">
     <div ng-repeat="bar in bars" class="col-md-4">
@@ -29,12 +29,21 @@
               <button type="button" ng-hide="going[bar.restaurant.id]" ng-click="go(bar.restaurant.id)" class="btn btn-sm btn-outline-secondary">Go</button>
               <button type="button" ng-show="going[bar.restaurant.id]" ng-click="remove(bar.restaurant.id)" class="btn btn-sm btn-outline-secondary">Cancel</button>
             </div>
-            <small class="text-muted">{{strengths[bar.restaurant.id]}} going</small>
+            <!-- <small class="text-muted">{{bar.restaurant.location.address}}</small> -->
+            <p class="card-text">{{bar.restaurant.location.address}}</p>
+            
           </div>
+          <small class="text-muted">{{strengths[bar.restaurant.id]}} going</small>
         </div>
       </div>
     </div>
     </div>
   </div>
 </div>
+<div ng-show="loading" class="d-flex justify-content-center">
+  <div class="spinner-grow m-5" style="width: 5rem; height: 5rem;" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+<ul ng-show="bars && (!loading)" uib-pagination total-items="totalBars" ng-model="currentPage" items-per-page="pageSize" max-size="5" ng-change="pageChanged()"></ul>
 </div>
